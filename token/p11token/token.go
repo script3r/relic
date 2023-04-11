@@ -107,17 +107,22 @@ func Open(config *config.Config, tokenName string, pinProvider passprompt.Passwo
 		tok.Close()
 		return nil, err
 	}
-	mode := uint(pkcs11.CKF_SERIAL_SESSION | pkcs11.CKF_RW_SESSION)
+	mode := uint(pkcs11.CKF_SERIAL_SESSION)
+	if tokenConf.ReadWrite {
+		mode = mode | pkcs11.CKF_RW_SESSION
+	}
 	sh, err := tok.ctx.OpenSession(slot, mode)
 	if err != nil {
 		tok.Close()
 		return nil, err
 	}
 	tok.sh = sh
-	err = tok.autoLogIn(pinProvider)
-	if err != nil {
-		tok.Close()
-		return nil, err
+	if tokenConf.AutoLogin {
+		err = tok.autoLogIn(pinProvider)
+		if err != nil {
+			tok.Close()
+			return nil, err
+		}
 	}
 	return tok, nil
 }

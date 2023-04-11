@@ -51,8 +51,9 @@ type TokenConfig struct {
 	Retries    int     // (server) Retry failed commands N times (default 5)
 	User       *uint   // User argument for PKCS#11 login (optional)
 	UseKeyring bool    // Read PIN from system keyring
-
-	name string
+	ReadWrite  bool    // Set the connection to read/write mode
+	AutoLogin  bool    // Attempt to authenticate automatically
+	name       string
 }
 
 type KeyConfig struct {
